@@ -1,19 +1,49 @@
-import { Controller, Delete, Get, Post, Put, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Put, Query,
+  Req,
+  Res
+} from "@nestjs/common";
 import { Request, Response } from 'express';
+import { Todo } from './entities/todo.entity';
 
 @Controller('todo')
 export class TodoController {
+  todos: Todo[];
+
+  constructor() {
+    this.todos = [];
+  }
+
   @Get()
-  getTodos(@Req() request: Request, @Res() response: Response): string {
-    console.log('Liste des todo');
-    response.send('Liste des todos dans le corps de la réponse'); //overrides the return statement
-    return 'Liste des todos';
+  getTodos(@Req() request: Request, @Res() response: Response, @Query() queryParams): Todo[] {
+    console.log(queryParams);
+    response.send(this.todos); //overrides the return statement
+    return this.todos;
   }
+
+  @Get('/:id')
+  getTodo(@Param('id') id): Todo {
+    const todo = this.todos.find((actualtodo) => actualtodo.id === +id);
+    if (todo) {
+      return todo;
+    }
+    throw new NotFoundException(`Todo id ${id} not found`);
+  }
+
   @Post()
-  newTodo(): string {
-    console.log("Création d'un nouveau to-do");
-    return 'New To Do';
+  newTodo(@Body() todo: Todo): Todo {
+    todo.id = this.todos.length + 1;
+    this.todos.push(todo);
+    return todo;
   }
+
   @Put()
   updateTodo(): string {
     console.log("MAJ d'un to-do");
