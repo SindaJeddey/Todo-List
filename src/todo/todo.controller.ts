@@ -14,14 +14,12 @@ import {
 import { Request, Response } from 'express';
 import { Todo } from './entities/todo.entity';
 import { NewTodoDto } from "./entities/Dtos/newTodo.dto";
+import { TodoService } from "./todo.service";
 
 @Controller('todo')
 export class TodoController {
-  todos: Todo[];
 
-  constructor() {
-    this.todos = [];
-  }
+  constructor(private todoService: TodoService) {}
 
   @Get()
   getTodos(
@@ -29,42 +27,32 @@ export class TodoController {
     @Res() response: Response,
     @Query() queryParams,
   ): Todo[] {
-    console.log(queryParams);
-    response.send(this.todos); //overrides the return statement
-    return this.todos;
+    return this.todoService.getAllTodos();
   }
 
   @Get('/:id')
   getTodo(@Param('id') id): Todo {
-    const todo = this.todos.find((actualtodo) => actualtodo.id === +id);
-    if (todo) {
-      return todo;
-    }
-    throw new NotFoundException(`Todo id ${id} not found`);
+    return this.todoService.getTodo(id);
   }
 
   @Post()
-  newTodo(@Body() newTodo: NewTodoDto): Todo {
-    const todo = new Todo(newTodo.name,newTodo.description);
-    todo.id = this.todos.length + 1;
-    this.todos.push(todo);
-    return todo;
+  newTodo(
+    @Body() newTodo: NewTodoDto
+  ): Todo {
+    return this.todoService.createTodo(newTodo);
   }
 
   @Put('/:id')
-  updateTodo(@Param('id') id, @Body() updates: Partial<Todo>): Todo {
-    const todo = this.todos.find((actualtodo) => actualtodo.id === +id);
-    todo.name = updates.name ? updates.name : todo.name;
-    todo.description = updates.description ? updates.description : todo.description
-    return todo;
+  updateTodo(
+    @Param('id') id,
+    @Body() updates: Partial<Todo>
+  ): Todo {
+    return this.todoService.updateTodo(id,updates);
   }
 
   @Delete('/:id')
   deleteTodo(@Param('id') id): string {
-    const index = this.todos.findIndex((todo) => todo.id === +id);
-    if (index >= 0) {
-      this.todos.slice(index, index + 1);
-      return 'To do supprimé';
-    } else throw new NotFoundException(`Todo id ${id} not found`);
+    this.todoService.deleteTodo(id);
+    return 'To do deleted';
   }
 }
