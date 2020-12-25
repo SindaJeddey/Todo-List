@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Todo } from './entities/todo.entity';
+import { NewTodoDto } from "./entities/Dtos/newTodo.dto";
 
 @Controller('todo')
 export class TodoController {
@@ -43,21 +44,24 @@ export class TodoController {
   }
 
   @Post()
-  newTodo(@Body() todo: Todo): Todo {
+  newTodo(@Body() newTodo: NewTodoDto): Todo {
+    const todo = new Todo(newTodo.name,newTodo.description);
     todo.id = this.todos.length + 1;
     this.todos.push(todo);
     return todo;
   }
 
-  @Put()
-  updateTodo(): string {
-    console.log("MAJ d'un to-do");
-    return 'To Do mis à jour';
+  @Put('/:id')
+  updateTodo(@Param('id') id, @Body() updates: Partial<Todo>): Todo {
+    const todo = this.todos.find((actualtodo) => actualtodo.id === +id);
+    todo.name = updates.name ? updates.name : todo.name;
+    todo.description = updates.description ? updates.description : todo.description
+    return todo;
   }
+
   @Delete('/:id')
   deleteTodo(@Param('id') id): string {
     const index = this.todos.findIndex((todo) => todo.id === +id);
-    console.log(index);
     if (index >= 0) {
       this.todos.slice(index, index + 1);
       return 'To do supprimé';
