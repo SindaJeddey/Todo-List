@@ -3,16 +3,17 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
+  HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
   Req,
-  Res,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
-import { Todo } from './entities/todo.entity';
+  Res
+} from "@nestjs/common";
+import { Request, Response } from "express";
+import { Todo } from "./entities/todo.entity";
 import { NewTodoDto } from "./entities/Dtos/newTodo.dto";
 import { TodoService } from "./todo.service";
 
@@ -31,7 +32,9 @@ export class TodoController {
   }
 
   @Get('/:id')
-  getTodo(@Param('id') id): Todo {
+  getTodo(@Param('id',new ParseIntPipe({ //for pipe customizing
+    errorHttpStatusCode: HttpStatus.NOT_FOUND
+  })) id): Todo {
     return this.todoService.getTodo(id);
   }
 
@@ -44,14 +47,14 @@ export class TodoController {
 
   @Put('/:id')
   updateTodo(
-    @Param('id') id,
+    @Param('id',ParseIntPipe) id,
     @Body() updates: Partial<Todo>
   ): Todo {
     return this.todoService.updateTodo(id,updates);
   }
 
   @Delete('/:id')
-  deleteTodo(@Param('id') id): string {
+  deleteTodo(@Param('id',ParseIntPipe) id): string {
     this.todoService.deleteTodo(id);
     return 'To do deleted';
   }

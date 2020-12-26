@@ -7,12 +7,11 @@ export class TodoService {
   todos: Todo[] = [];
 
   getAllTodos(): Todo[]{
-    console.log('in here');
     return this.todos;
   }
 
   getTodo(id) : Todo{
-    const todo = this.todos.find((actualtodo) => actualtodo.id === +id);
+    const todo = this.todos.find((actualtodo) => actualtodo.id === id);
     if (todo) {
       return todo;
     }
@@ -40,7 +39,7 @@ export class TodoService {
   }
 
   deleteTodo(id){
-    const index = this.todos.findIndex((todo) => todo.id === +id);
+    const index = this.todos.findIndex((todo) => todo.id === id);
     if (index >= 0) {
       this.todos.slice(index, index + 1);
       return 'To do supprimé';
