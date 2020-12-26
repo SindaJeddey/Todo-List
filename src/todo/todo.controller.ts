@@ -16,6 +16,7 @@ import { Request, Response } from "express";
 import { Todo } from "./entities/todo.entity";
 import { NewTodoDto } from "./entities/Dtos/newTodo.dto";
 import { TodoService } from "./todo.service";
+import { UpperAndFusionPipe } from "../pipes/upper-and-fusion.pipe";
 
 @Controller('todo')
 export class TodoController {
@@ -57,5 +58,10 @@ export class TodoController {
   deleteTodo(@Param('id',ParseIntPipe) id): string {
     this.todoService.deleteTodo(id);
     return 'To do deleted';
+  }
+
+  @Post('pipe')
+  testPipe(@Body(UpperAndFusionPipe) data){
+    return data;
   }
 }
