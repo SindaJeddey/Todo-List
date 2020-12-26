@@ -10,14 +10,16 @@ import {
   Put,
   Query,
   Req,
-  Res
+  Res, UseInterceptors
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { Todo } from "./entities/todo.entity";
 import { NewTodoDto } from "./entities/Dtos/newTodo.dto";
 import { TodoService } from "./todo.service";
 import { UpperAndFusionPipe } from "../pipes/upper-and-fusion.pipe";
+import { DurationInterceptor } from "../interceptors/duration.interceptor";
 
+@UseInterceptors(DurationInterceptor)
 @Controller('todo')
 export class TodoController {
 
