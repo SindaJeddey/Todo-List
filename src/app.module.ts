@@ -5,6 +5,7 @@ import { TodoModule } from "./todo/todo.module";
 import { FirstMiddleware } from "./middlewares/first.middleware";
 import { logger } from "./middlewares/logger.middleware";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { CvModule } from './cv/cv.module';
 import * as dotenv from 'dotenv'
 
 dotenv.config();
@@ -20,7 +21,8 @@ dotenv.config();
       database: process.env.DB_NAME,
       entities: ["dist/**/*.entity{.ts,.js}"] ,
       synchronize: true // les entités crées seront directement mappées dans la DB
-    })
+    }),
+    CvModule
   ],
   controllers: [AppController],
   providers: [AppService],
