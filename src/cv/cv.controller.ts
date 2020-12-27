@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from "@nestjs/common";
 import { CvService } from "./cv.service";
 import { CvEntity } from "./entities/cv.entity";
 import { NewCvDto } from "./dto/new-cv.dto";
 import { UpdateCvDto } from "./dto/update-cv.dto";
 import { UpdateResult } from "typeorm";
+import { JwtAuthGuard } from "../user/guards/jwt-auth.guard";
 
 @Controller('cv')
 export class CvController {
@@ -32,6 +33,7 @@ export class CvController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async addCv(
     @Body() newCv: NewCvDto
   ) : Promise<CvEntity> {
@@ -39,6 +41,7 @@ export class CvController {
   }
 
   @Patch('/:id')
+  @UseGuards(JwtAuthGuard)
   async updateCv(
     @Param('id', ParseIntPipe) id,
     @Body() updates: UpdateCvDto
@@ -47,6 +50,7 @@ export class CvController {
   }
 
   @Delete('/:id')
+  @UseGuards(JwtAuthGuard)
   async deleteCv(
     @Param('id',ParseIntPipe) id
   ) : Promise<CvEntity>{
