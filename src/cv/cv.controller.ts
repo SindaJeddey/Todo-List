@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from "@nestjs/common";
 import { CvService } from "./cv.service";
 import { CvEntity } from "./entities/cv.entity";
 import { NewCvDto } from "./dto/new-cv.dto";
 import { UpdateCvDto } from "./dto/update-cv.dto";
 import { UpdateResult } from "typeorm";
 import { JwtAuthGuard } from "../user/guards/jwt-auth.guard";
+import { Request } from "express";
+import { User } from "../decorators/user.decorator";
 
 @Controller('cv')
 export class CvController {
@@ -13,8 +15,11 @@ export class CvController {
   }
 
   @Get()
-  async getAllCvs() : Promise<CvEntity[]>{
-    return await this.cvService.getCvs();
+  @UseGuards(JwtAuthGuard)
+  async getAllCvs(
+    @User() user
+  ) : Promise<CvEntity[]>{
+    return await this.cvService.getCvs(user);
   }
 
   @Get("/age/:minAge/:maxAge")
@@ -35,9 +40,10 @@ export class CvController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async addCv(
-    @Body() newCv: NewCvDto
+    @Body() newCv: NewCvDto,
+    @User() user
   ) : Promise<CvEntity> {
-    return await this.cvService.addCv(newCv);
+    return await this.cvService.addCv(newCv,user);
   }
 
   @Patch('/:id')

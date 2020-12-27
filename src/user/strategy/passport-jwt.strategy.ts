@@ -10,6 +10,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 dotenv.config()
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
+
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>) {
@@ -24,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.userRepository.findOne({username:payload.username})
     if(user){
       const {password, salt, ...rest} = user
-      return rest;
+      return rest; // this will be passed in the request
     } else {
       throw new UnauthorizedException();
     }
