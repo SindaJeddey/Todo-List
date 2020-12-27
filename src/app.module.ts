@@ -6,6 +6,7 @@ import { FirstMiddleware } from "./middlewares/first.middleware";
 import { logger } from "./middlewares/logger.middleware";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CvModule } from './cv/cv.module';
+import { UserModule } from './user/user.module';
 import * as dotenv from 'dotenv'
 
 dotenv.config();
@@ -22,7 +23,8 @@ dotenv.config();
       entities: ["dist/**/*.entity{.ts,.js}"] ,
       synchronize: true // les entités crées seront directement mappées dans la DB
     }),
-    CvModule
+    CvModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],

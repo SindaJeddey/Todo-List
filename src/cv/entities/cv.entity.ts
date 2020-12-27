@@ -1,9 +1,10 @@
 import {
   Column,
-  Entity,
+  Entity, ManyToOne,
   PrimaryGeneratedColumn
 } from "typeorm";
 import { TimestampEntity } from "../../generics/timestamp.entity";
+import { UserEntity } from "../../user/entities/user.entity";
 
 @Entity('cv')
 export class CvEntity extends TimestampEntity{
@@ -31,5 +32,15 @@ export class CvEntity extends TimestampEntity{
 
   @Column()
   path: string;
+
+  @ManyToOne(
+    type => UserEntity,
+    user => user.cvs,
+    {
+      cascade: ["insert","update"],
+      eager: true,
+      nullable: true
+    })
+  user: UserEntity;
 
 }
