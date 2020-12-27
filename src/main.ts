@@ -2,7 +2,9 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { HttpStatus, ValidationPipe } from "@nestjs/common";
 import { DurationInterceptor } from "./interceptors/duration.interceptor";
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({
@@ -12,6 +14,6 @@ async function bootstrap() {
     forbidNonWhitelisted: true
     }))
   // app.useGlobalInterceptors(new DurationInterceptor()) : for global use of interceptors
-  await app.listen(3000);
+  await app.listen(process.env.APP_PORT);
 }
 bootstrap();

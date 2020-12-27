@@ -4,9 +4,24 @@ import { AppService } from "./app.service";
 import { TodoModule } from "./todo/todo.module";
 import { FirstMiddleware } from "./middlewares/first.middleware";
 import { logger } from "./middlewares/logger.middleware";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import * as dotenv from 'dotenv'
 
+dotenv.config();
 @Module({
-  imports: [TodoModule],
+  imports: [
+    TodoModule,
+    TypeOrmModule.forRoot({
+      type:'mysql',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password:process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      entities: ["dist/**/*.entity{.ts,.js}"] ,
+      synchronize: true // les entités crées seront directement mappées dans la DB
+    })
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
